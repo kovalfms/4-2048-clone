@@ -1,9 +1,51 @@
 .App {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .board {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 500px;
+  background-color: #807674;
+}
+.boardTop {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.score {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: #857d75;
+  color: #fff;
+  width: 100px;
+  height: 80px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  margin-left: 50px;
+}
+
+.counter {
+  font-size: 30px;
+}
+
+button {
+  cursor: pointer;
+  background-color: #857d75;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  width: 120px;
+  height: 40px;
+}
+
+button:hover {
+  opacity: 0.8;
 }

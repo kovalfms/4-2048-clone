@@ -13,7 +13,7 @@ export const useEvent = (event, handler) => {
     )
 }
 
-export const BtnColors = (num) => {
+export const cellColors = (num) => {
     switch (num) {
         case 2:
             return "#939090";
@@ -37,6 +37,10 @@ export const BtnColors = (num) => {
             return "#f568c8";
         case 2048:
             return "#942777";
+        case 4096:
+            return  "#fe3d3d";
+        case 8192:
+            return "#ff2020";
         default:
             return "#cdc1b5";
     }

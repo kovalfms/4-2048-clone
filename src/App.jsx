@@ -1,14 +1,21 @@
 import {useEffect, useState} from "react";
 import cloneDeep from "clone-deep"
-import Cell from "./components/Cell/Cell";
-import './App.css';
+
+import {Cell} from "./components/Cell";
+import {Popup} from "./components/Popup";
 import {useEvent} from "./utils";
 
+import './App.css';
+
+const WIN = <h1>YOU WIN!!! &#128522;</h1>
+const LOSE = <h1>YOU LOSE!!! &#128543;</h1>
 
 function App() {
     const [score, setScore] = useState(0)
+    const [haveZero, setHaveZero] = useState(false)
     const [gameWon, setGameWon] = useState(false)
     const [gameLose, setGameLose] = useState(false)
+    const [showPopup, setShowPopup] = useState(false)
     const [board, setBoard] = useState([
             [0, 0, 0, 0],
             [0, 0, 0, 0],
@@ -17,11 +24,19 @@ function App() {
         ]
     )
 
-    console.log(gameLose)
 
     useEffect(() => {
         initialBoard()
     }, [])
+
+    useEffect(() => {
+        if (board.flat().includes(0)) {
+            setHaveZero(true)
+        } else {
+            setHaveZero(false)
+        }
+        checkGameLose()
+    }, [board, haveZero]);
 
 
     const initialBoard = () => {
@@ -37,13 +52,38 @@ function App() {
         while (!isAdded) {
             const x = Math.floor(Math.random() * 4)
             const y = Math.floor(Math.random() * 4)
-            console.log("X", x)
-            console.log("Y", y)
             if (newBoard[x][y] === 0) {
                 newBoard[x][y] = Math.random() > 0.5 ? 2 : 4
                 isAdded = true
             }
-            console.log('ADD RANDOM NUM', newBoard[x][y])
+        }
+    }
+
+    const checkGameLose = () => {
+        if (!haveZero) {
+            let rowMove = false;
+            let columnMove = false;
+
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 3; j++) {
+                    if (board[i][j] === board[i][j + 1]) {
+                        rowMove = true
+                    }
+                }
+            }
+
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 3; j++) {
+                    if (board[j][i] === board[j + 1][i]) {
+                        columnMove = true;
+                    }
+                }
+            }
+
+            if (!rowMove && !columnMove) {
+                setGameLose(true)
+                setShowPopup(true)
+            }
         }
     }
 
@@ -60,6 +100,7 @@ function App() {
         setScore(0)
         setGameWon(false)
         setGameLose(false)
+        setShowPopup(false)
     }
 
 
@@ -85,7 +126,6 @@ function App() {
 
 
     const moveLeft = () => {
-        console.log('MOVE LEFT')
         const oldBoard = board
         const newBoard = cloneDeep(board)
         for (let i = 0; i < 4; i++) {
@@ -100,10 +140,10 @@ function App() {
                         newBoard[i][k - 1] = newBoard[i][k - 1] + newBoard[i][k]
                         newBoard[i][k] = 0
                         plugArr[k - 1] = 1
-                        console.log(plugArr)
                         setScore(prevState => prevState + newBoard[i][k - 1])
                         if (newBoard[i][k - 1] === 2048) {
                             setGameWon(true)
+                            setShowPopup(true)
                         }
                         break
                     }
@@ -116,7 +156,6 @@ function App() {
     }
 
     const moveRight = () => {
-        console.log('MOVE RIGHT')
         const oldBoard = board
         const newBoard = cloneDeep(board)
         for (let i = 0; i < 4; i++) {
@@ -132,10 +171,10 @@ function App() {
                         newBoard[i][k + 1] = newBoard[i][k + 1] + newBoard[i][k]
                         newBoard[i][k] = 0
                         plugArr[k + 1] = 1
-                        console.log(plugArr)
                         setScore(prevState => prevState + newBoard[i][k + 1])
                         if (newBoard[i][k + 1] === 2048) {
                             setGameWon(true)
+                            setShowPopup(true)
                         }
                         break
                     }
@@ -148,7 +187,6 @@ function App() {
     }
 
     const moveUp = () => {
-        console.log('MOVE UP')
         const oldBoard = board
         const newBoard = cloneDeep(board)
         for (let i = 0; i < 4; i++) {
@@ -163,9 +201,9 @@ function App() {
                         newBoard[k - 1][i] = newBoard[k - 1][i] + newBoard[k][i]
                         newBoard[k][i] = 0
                         plugArr[k - 1] = 1
-                        console.log(plugArr)
                         if (newBoard[k - 1][i] === 2048) {
                             setGameWon(true)
+                            setShowPopup(true)
                         }
                         setScore(prevState => prevState + newBoard[k - 1][i])
                         break
@@ -179,7 +217,6 @@ function App() {
     }
 
     const moveDown = () => {
-        console.log('MOVE DOWN')
         const oldBoard = board
         const newBoard = cloneDeep(board)
         for (let i = 0; i < 4; i++) {
@@ -195,9 +232,9 @@ function App() {
                         newBoard[k + 1][i] = newBoard[k + 1][i] + newBoard[k][i]
                         newBoard[k][i] = 0
                         plugArr[k + 1] = 1
-                        console.log(plugArr)
                         if (newBoard[k + 1][i] === 2048) {
                             setGameWon(true)
+                            setShowPopup(true)
                         }
                         setScore(prevState => prevState + newBoard[k + 1][i])
                         break
@@ -210,23 +247,15 @@ function App() {
         setBoard(newBoard)
     }
 
-    if (gameWon) {
-        return (
-            <h1>YOU WIN!!!!</h1>
-        )
-    }
-    if (gameLose) {
-        return (
-            <h1>YOU LOSE!!!!</h1>
-        )
-    }
-
-
     return (
         <div className="App">
-            <h1 style={{fontSize: "60px"}}>2048 GAME</h1> <h2>SCORE {score}</h2>
-            {/*{gameWon && <h1>YOU WIN!!!!</h1>}*/}
-            {gameLose && <h1>YOU LOSE &#128543;</h1>}
+            <div className="boardTop">
+                <h1 style={{fontSize: "60px"}}>2048 GAME</h1>
+                <div className="score">
+                    <div>SCORE:</div>
+                    <div className="counter">{score}</div>
+                </div>
+            </div>
             {board.map((row, index) => {
                 return <div className="board" key={index}>
                     {row.map((num, i) =>
@@ -235,8 +264,10 @@ function App() {
                 </div>
             })}
             {!gameLose && <button style={{marginTop: "20px"}} onClick={resetGame}>RESET</button>}
-
+            {gameLose && showPopup ? <Popup text={LOSE} resetGame={resetGame}/> : null}
+            {gameWon && showPopup ? <Popup text={WIN} resetGame={resetGame}/> : null}
         </div>
+
     );
 }
 

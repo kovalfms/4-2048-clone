@@ -1,17 +1,14 @@
 import React from 'react';
 
-import {BtnColors} from "../../utils";
+import {cellColors} from "../../utils";
 
 import classes from './Cell.module.css'
 
 
-
-const Cell = ({num}) => {
+export const Cell = ({num}) => {
     return (
-        <div className={classes.cell} style={{background: BtnColors(num)}}>
+        <div className={classes.cell} style={{background: cellColors(num)}}>
             {num !== 0 ? num : ''}
         </div>
     );
 };
-
-export default Cell;
